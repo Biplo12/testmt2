@@ -26,8 +26,9 @@
 
 ### GM Differences
 - [x] GM whisper shows `[GM]` tag with role color in whisper window title (via `getRoleTag()` color codes in partnerName)
-- [ ] GM can whisper to invisible/hidden players
-- [ ] Optional: `/whisperall <message>` broadcast whisper to all online players (GM only)
+- [x] GM can whisper to invisible/hidden players (works by default - World lookup ignores visibility)
+- [ ] Whisper window icon: when GM sends whisper, show GM/YMIR icon instead of default envelope icon (client-side change)
+- [x] `/whisperall <message>` broadcast whisper to all online players (GM only)
 
 ### Visual / Client
 - [x] Verify TMP4 client whisper window opens correctly on receive - verified

@@ -7,6 +7,8 @@ export enum WhisperTypeEnum {
     NORMAL = 0,
     NOT_FOUND = 1,
     BLOCKED = 2,
+    SENDER_BLOCKED = 3,
+    GM = 5,
 }
 
 type WhisperOutPacketParams = {

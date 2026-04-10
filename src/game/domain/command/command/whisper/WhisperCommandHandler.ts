@@ -49,10 +49,12 @@ export default class WhisperCommandHandler extends CommandHandler<WhisperCommand
         const senderTag = getRoleTag(player.getRole());
         const senderDisplayName = senderTag ? `${senderTag}${player.getRawName()}` : player.getRawName();
 
+        const whisperType = player.hasStaffRole() ? WhisperTypeEnum.GM : WhisperTypeEnum.NORMAL;
+
         target.whisper({
             partnerName: senderDisplayName,
             message: whisperMessage,
-            type: WhisperTypeEnum.NORMAL,
+            type: whisperType,
         });
     }
 }

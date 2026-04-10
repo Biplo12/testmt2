@@ -67,10 +67,12 @@ Sent by the server to deliver a whisper message or error to a client.
 
 ## GM Features
 
-- GM identity is shown via the `[GM]` tag prefix in the `partnerName` field (e.g. `[GM]biplo12`)
-- The tag is added using `getRawRoleTag()` (without color codes to fit the 25-byte name field)
-- When a reply is received from a tagged name, the handler strips the tag via regex before player lookup
+- GM identity is shown via the `[GM]` tag with color codes in the `partnerName` field (e.g. `|cFFFF0000[GM]biplo12`)
+- The tag is added using `getRoleTag()` which includes color codes from `ROLE_CONFIG`
+- When a reply is received from a tagged name, the handler strips color codes and role tags via regex before player lookup
 - All whispers use `type=NORMAL` (0) regardless of sender role — type=2 means "blocked" in TMP4 client
+- GM can whisper invisible/hidden players (World lookup ignores visibility affects)
+- `/whisperall <message>` — GM-only command that broadcasts a whisper to all online players
 
 ## Key Files
 
