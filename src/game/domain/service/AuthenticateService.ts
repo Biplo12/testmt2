@@ -35,6 +35,8 @@ export default class AuthenticateService {
             return Result.error(ErrorTypesEnum.INVALID_TOKEN);
         }
 
+        await this.cacheProvider.delete(cacheKey);
+
         return Result.ok(token as Token);
     }
 }

@@ -1517,10 +1517,15 @@ export default class Player extends Character {
     getName() {
         const tag = getRoleTag(this.role);
         const displayName = tag ? `${tag}${this.name}` : this.name;
+
         if (this.nameColor !== NameColorEnum.DEFAULT && this.nameColor !== getRoleColor(this.role)) {
             return colorize(displayName, this.nameColor);
         }
+
         return displayName;
+    }
+    getRawName() {
+        return this.name;
     }
     isInvincible() {
         return this.invincible;

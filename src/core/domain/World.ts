@@ -177,7 +177,7 @@ export default class World {
         }
 
         if (entity instanceof Player) {
-            this.players.set(entity.getName(), entity);
+            this.players.set(entity.getRawName(), entity);
         }
 
         area.spawn(entity);
@@ -192,7 +192,7 @@ export default class World {
         }
 
         if (entity instanceof Player) {
-            this.players.delete(entity.getName());
+            this.players.delete(entity.getRawName());
         }
 
         area.despawn(entity);

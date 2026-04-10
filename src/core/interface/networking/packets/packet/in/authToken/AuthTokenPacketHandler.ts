@@ -1,4 +1,4 @@
-import { AccountRoleEnum, ROLE_NAME_PREFIX } from '@/core/enum/AccountRoleEnum';
+import { AccountRoleEnum, getRoleTag } from '@/core/enum/AccountRoleEnum';
 import Logger from '@/core/infra/logger/Logger';
 import LoadCharactersService from '@/game/app/service/LoadCharactersService';
 import AuthenticateService from '@/game/domain/service/AuthenticateService';
@@ -46,7 +46,11 @@ export default class AuthTokenPacketHandler extends PacketHandler<AuthTokenPacke
         const { accountId, role } = authResult.getData();
 
         connection.setAccountId(accountId);
-        connection.setRole((role as AccountRoleEnum) ?? AccountRoleEnum.PLAYER);
+        const validRoles = Object.values(AccountRoleEnum);
+        const safeRole = validRoles.includes(role as AccountRoleEnum)
+            ? (role as AccountRoleEnum)
+            : AccountRoleEnum.PLAYER;
+        connection.setRole(safeRole);
 
         const charactersResult = await this.loadCharactersService.execute({ accountId });
 
@@ -60,12 +64,12 @@ export default class AuthTokenPacketHandler extends PacketHandler<AuthTokenPacke
                     }),
                 );
 
-                const rolePrefix = ROLE_NAME_PREFIX[role as AccountRoleEnum] ?? '';
+                const roleTag = getRoleTag(role as AccountRoleEnum);
 
                 const characterInfoPacket = new CharactersInfoPacket();
                 players.forEach((player) => {
                     characterInfoPacket.addCharacter(player.slot, {
-                        name: `${rolePrefix}${player.name}`,
+                        name: `${roleTag}${player.name}`,
                         playerClass: player.playerClass,
                         bodyPart: player.bodyPart,
                         hairPart: player.hairPart,
