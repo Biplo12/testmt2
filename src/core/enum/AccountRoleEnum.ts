@@ -22,6 +22,10 @@ export function getRoleColor(role: AccountRoleEnum): NameColorEnum {
     return ROLE_CONFIG[role]?.color ?? NameColorEnum.DEFAULT;
 }
 
+export function getRawRoleTag(role: AccountRoleEnum): string {
+    return ROLE_CONFIG[role]?.tag ?? '';
+}
+
 export function isStaffRole(role: AccountRoleEnum): boolean {
     return ROLE_CONFIG[role]?.staff ?? false;
 }

@@ -31,11 +31,13 @@ Sent by the server to deliver a whisper message or error to a client.
 
 #### Whisper Types (`WhisperTypeEnum`)
 
-| Value | Name        | Description                                   |
-|-------|-------------|-----------------------------------------------|
-| 0     | `NORMAL`    | Regular whisper message                       |
-| 1     | `NOT_FOUND` | Target player not found / offline             |
-| 2     | `GM`        | Whisper from a staff member (GM/Moderator)    |
+| Value | Name        | Description                                        |
+|-------|-------------|----------------------------------------------------|
+| 0     | `NORMAL`    | Regular whisper message                            |
+| 1     | `NOT_FOUND` | Target player not found / offline                  |
+| 2     | `BLOCKED`   | Target has blocked whispering (client-side display)|
+
+> **Note:** GM identity in whispers is conveyed through the `[GM]` tag in the `partnerName` field (e.g. `[GM]biplo12`), not through the type field. Type=2 triggers "has blocked whispering" in the TMP4 client.
 
 ## Flow
 
@@ -65,8 +67,10 @@ Sent by the server to deliver a whisper message or error to a client.
 
 ## GM Features
 
-- When a staff member (`hasStaffRole()`) sends a whisper, the `type` field is set to `GM` (2)
-- The client renders GM whispers with distinct styling (icon/color)
+- GM identity is shown via the `[GM]` tag prefix in the `partnerName` field (e.g. `[GM]biplo12`)
+- The tag is added using `getRawRoleTag()` (without color codes to fit the 25-byte name field)
+- When a reply is received from a tagged name, the handler strips the tag via regex before player lookup
+- All whispers use `type=NORMAL` (0) regardless of sender role — type=2 means "blocked" in TMP4 client
 
 ## Key Files
 

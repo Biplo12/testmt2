@@ -802,9 +802,7 @@ export default class Player extends Character {
     }
 
     whisper({ partnerName, message, type }: { partnerName: string; message: string; type: WhisperTypeEnum }) {
-        this.connection.send(
-            new WhisperOutPacket({ type, partnerName, message }),
-        );
+        this.connection.send(new WhisperOutPacket({ type, partnerName, message }));
     }
 
     sendCommandErrors(errors: Array<any>) {

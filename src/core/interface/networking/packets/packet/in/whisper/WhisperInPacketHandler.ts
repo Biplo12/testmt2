@@ -3,7 +3,12 @@ import PacketHandler from '../../PacketHandler';
 import WhisperInPacket from './WhisperInPacket';
 import GameConnection from '@/game/interface/networking/GameConnection';
 import World from '@/core/domain/World';
-import WhisperOutPacket, { WhisperTypeEnum } from '../../out/WhisperOutPacket';
+import { ChatMessageTypeEnum } from '@/core/enum/ChatMessageTypeEnum';
+import { WhisperTypeEnum } from '../../out/WhisperOutPacket';
+import { getRoleTag } from '@/core/enum/AccountRoleEnum';
+
+const COLOR_CODE_PATTERN = /\|cFF[0-9A-Fa-f]{6}/g;
+const ROLE_TAG_PATTERN = /^\[(?:GM|MOD)\]/;
 
 export default class WhisperInPacketHandler extends PacketHandler<WhisperInPacket> {
     private logger: Logger;
@@ -32,49 +37,36 @@ export default class WhisperInPacketHandler extends PacketHandler<WhisperInPacke
         }
 
         const targetName = packet.getTargetName();
+        const rawTargetName = targetName.replace(COLOR_CODE_PATTERN, '').replace(ROLE_TAG_PATTERN, '');
         const message = packet.getMessage();
 
-        this.logger.info(
-            `[WhisperInPacketHandler] ${player.getRawName()} -> ${targetName}: ${message}`,
-        );
+        this.logger.info(`[WhisperInPacketHandler] ${player.getRawName()} -> ${rawTargetName}: ${message}`);
 
-        if (targetName === player.getRawName()) {
-            connection.send(
-                new WhisperOutPacket({
-                    type: WhisperTypeEnum.NOT_FOUND,
-                    partnerName: targetName,
-                }),
-            );
+        if (rawTargetName === player.getRawName()) {
+            player.chat({
+                message: '[SYSTEM] You cannot whisper to yourself.',
+                messageType: ChatMessageTypeEnum.INFO,
+            });
             return;
         }
 
-        const target = this.world.getPlayerByName(targetName);
+        const target = this.world.getPlayerByName(rawTargetName);
 
         if (!target) {
-            connection.send(
-                new WhisperOutPacket({
-                    type: WhisperTypeEnum.NOT_FOUND,
-                    partnerName: targetName,
-                }),
-            );
+            player.chat({
+                message: `[SYSTEM] Player ${rawTargetName} is not online.`,
+                messageType: ChatMessageTypeEnum.INFO,
+            });
             return;
         }
 
-        const senderName = player.getRawName();
-        const whisperType = player.hasStaffRole() ? WhisperTypeEnum.GM : WhisperTypeEnum.NORMAL;
+        const senderTag = getRoleTag(player.getRole());
+        const senderDisplayName = senderTag ? `${senderTag}${player.getRawName()}` : player.getRawName();
 
         target.whisper({
-            partnerName: senderName,
+            partnerName: senderDisplayName,
             message,
-            type: whisperType,
+            type: WhisperTypeEnum.NORMAL,
         });
-
-        connection.send(
-            new WhisperOutPacket({
-                type: WhisperTypeEnum.NORMAL,
-                partnerName: targetName,
-                message,
-            }),
-        );
     }
 }

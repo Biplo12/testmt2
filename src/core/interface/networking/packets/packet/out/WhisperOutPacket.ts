@@ -6,7 +6,7 @@ const CHARACTER_NAME_MAX_LEN = 25;
 export enum WhisperTypeEnum {
     NORMAL = 0,
     NOT_FOUND = 1,
-    GM = 2,
+    BLOCKED = 2,
 }
 
 type WhisperOutPacketParams = {
