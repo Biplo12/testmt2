@@ -44,7 +44,12 @@ describe('LoginService', function () {
     });
 
     it('should return a key and cache the token if credentials are valid', async function () {
-        const account = { getId: () => 1, getUsername: () => 'user', getPassword: () => 'hashedPassword', getRole: () => 'PLAYER' };
+        const account = {
+            getId: () => 1,
+            getUsername: () => 'user',
+            getPassword: () => 'hashedPassword',
+            getRole: () => 'PLAYER',
+        };
         accountRepository.findByUsername.resolves(account);
         encryptionProvider.compare.resolves(true);
 
