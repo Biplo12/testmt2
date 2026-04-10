@@ -33,6 +33,10 @@ import InvisibilityCommand from './command/invisibility/InvisibilityCommand';
 import InvisibilityCommandHandler from './command/invisibility/InvisibilityCommandHandler';
 import NameColorCommand from './command/namecolor/NameColorCommand';
 import NameColorCommandHandler from './command/namecolor/NameColorCommandHandler';
+import WhisperCommand from './command/whisper/WhisperCommand';
+import WhisperCommandHandler from './command/whisper/WhisperCommandHandler';
+import WhisperAllCommand from './command/whisperall/WhisperAllCommand';
+import WhisperAllCommandHandler from './command/whisperall/WhisperAllCommandHandler';
 import CommandHandler from './CommandHandler';
 
 export type CommandConstructor<T extends Command> = {
@@ -178,6 +182,21 @@ export default () =>
             {
                 command: NameColorCommand,
                 createHandler: (params) => new NameColorCommandHandler(params),
+                gmOnly: true,
+            },
+        ],
+        [
+            WhisperCommand.getName(),
+            {
+                command: WhisperCommand,
+                createHandler: (params) => new WhisperCommandHandler(params),
+            },
+        ],
+        [
+            WhisperAllCommand.getName(),
+            {
+                command: WhisperAllCommand,
+                createHandler: (params) => new WhisperAllCommandHandler(params),
                 gmOnly: true,
             },
         ],

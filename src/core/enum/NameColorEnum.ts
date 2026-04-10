@@ -16,7 +16,7 @@ const NAME_COLOR_HEX: Record<NameColorEnum, string> = {
     [NameColorEnum.RED]: 'FF0000',
     [NameColorEnum.BLUE]: '3296FF',
     [NameColorEnum.GREEN]: '00FF00',
-    [NameColorEnum.GOLDEN]: 'FFD700',
+    [NameColorEnum.GOLDEN]: 'FFA200',
     [NameColorEnum.PURPLE]: 'AA00FF',
     [NameColorEnum.WHITE]: 'FFFFFF',
     [NameColorEnum.ORANGE]: 'FF8C00',

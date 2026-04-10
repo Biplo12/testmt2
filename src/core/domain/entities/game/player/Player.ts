@@ -20,6 +20,7 @@ import { SpecialItemEnum } from '@/core/enum/SpecialItemEnum';
 import { FlyEnum } from '@/core/enum/FlyEnum';
 import GameConnection from '@/game/interface/networking/GameConnection';
 import ChatOutPacket from '@/core/interface/networking/packets/packet/out/ChatOutPacket';
+import WhisperOutPacket, { WhisperTypeEnum } from '@/core/interface/networking/packets/packet/out/WhisperOutPacket';
 import DamagePacket from '@/core/interface/networking/packets/packet/out/DamagePacket';
 import TargetUpdatedPacket from '@/core/interface/networking/packets/packet/out/TargetUpdatePacket';
 import CharacterSpawnPacket from '@/core/interface/networking/packets/packet/out/CharacterSpawnPacket';
@@ -798,6 +799,10 @@ export default class Player extends Character {
                 empireId: this.getEmpire(),
             }),
         );
+    }
+
+    whisper({ partnerName, message, type }: { partnerName: string; message: string; type: WhisperTypeEnum }) {
+        this.connection.send(new WhisperOutPacket({ type, partnerName, message }));
     }
 
     sendCommandErrors(errors: Array<any>) {

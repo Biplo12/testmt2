@@ -53,4 +53,6 @@ export default {
     QUEST_ANSWER: 0x1d,
     QUEST_BUTTON: 0x42,
     QUEST_INFO: 0x51,
+    WHISPER: 0x13,
+    WHISPER_OUT: 0x22,
 };
