@@ -9,7 +9,7 @@ export enum AccountRoleEnum {
 const ROLE_CONFIG: Record<AccountRoleEnum, { tag: string; color: NameColorEnum; staff: boolean }> = {
     [AccountRoleEnum.PLAYER]: { tag: '', color: NameColorEnum.DEFAULT, staff: false },
     [AccountRoleEnum.MODERATOR]: { tag: '[MOD]', color: NameColorEnum.BLUE, staff: true },
-    [AccountRoleEnum.GAME_MASTER]: { tag: '[GM]', color: NameColorEnum.RED, staff: true },
+    [AccountRoleEnum.GAME_MASTER]: { tag: '[GM]', color: NameColorEnum.GOLDEN, staff: true },
 };
 
 export function getRoleTag(role: AccountRoleEnum): string {

@@ -29,10 +29,6 @@ export default class WhisperCommandHandler extends CommandHandler<WhisperCommand
         const whisperMessage = messageParts.join(' ');
 
         if (targetName === player.getRawName()) {
-            player.chat({
-                message: '[SYSTEM] You cannot whisper to yourself.',
-                messageType: ChatMessageTypeEnum.INFO,
-            });
             return;
         }
 

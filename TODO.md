@@ -5,6 +5,12 @@
 - [ ] Update `auth.account.lastLogin` field on successful login
 - [ ] Set timestamp in `LoginService` or `AuthTokenPacketHandler` after authentication
 
+## Logout on Login (Prevent Duplicate Sessions)
+
+- [ ] When a player logs in, check if account already has an active session
+- [ ] If active session exists, disconnect/logout the old session before allowing new login
+- [ ] Prevent 2 clients from being connected on the same account simultaneously
+
 ## Whisper System (DM / Private Messages)
 
 ### Sending
@@ -29,6 +35,14 @@
 - [x] GM can whisper to invisible/hidden players (works by default - World lookup ignores visibility)
 - [ ] Whisper window icon: when GM sends whisper, show GM/YMIR icon instead of default envelope icon (client-side change)
 - [x] `/whisperall <message>` broadcast whisper to all online players (GM only)
+
+### Bugs
+- [ ] Whisper button duplicates: opening/closing whisper creates duplicate buttons for the same player - check if button already exists before creating new one (client-side `__MakeWhisperButton`)
+
+### Security / Rate Limiting
+- [ ] Add rate limiting for whisper packets (prevent whisper flood/spam)
+- [ ] Add max message length validation on server side (`WhisperInPacketHandler`)
+- [ ] Add max message length validation for `/whisper` command (`WhisperCommandValidator`)
 
 ### Visual / Client
 - [x] Verify TMP4 client whisper window opens correctly on receive - verified

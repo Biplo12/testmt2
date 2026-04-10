@@ -43,10 +43,6 @@ export default class WhisperInPacketHandler extends PacketHandler<WhisperInPacke
         this.logger.info(`[WhisperInPacketHandler] ${player.getRawName()} -> ${rawTargetName}: ${message}`);
 
         if (rawTargetName === player.getRawName()) {
-            player.chat({
-                message: '[SYSTEM] You cannot whisper to yourself.',
-                messageType: ChatMessageTypeEnum.INFO,
-            });
             return;
         }
 
