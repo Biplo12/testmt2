@@ -1,4 +1,5 @@
 import GameEntity from '@/core/domain/entities/game/GameEntity';
+import { AccountRoleEnum } from '@/core/enum/AccountRoleEnum';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
 import { GameConfig } from '@/game/infra/config/GameConfig';
 import Inventory from '../inventory/Inventory';
@@ -72,6 +73,8 @@ export default class Player extends Character {
     private hairPart: number;
     private slot: number;
     private appearance: number;
+    private role: AccountRoleEnum = AccountRoleEnum.PLAYER;
+    private invincible: boolean = false;
     private lastPlayTime: number = performance.now();
 
     private readonly config: GameConfig;
@@ -437,6 +440,7 @@ export default class Player extends Character {
 
     takeDamage(attacker: Character, damage: number): void {
         if (attacker.isDead()) return;
+        if (this.invincible) return;
 
         this.setPos(PositionEnum.FIGHTING);
         this.lastTimeInBattle = performance.now();
@@ -1461,5 +1465,26 @@ export default class Player extends Character {
     }
     getInventory() {
         return this.inventory;
+    }
+    getRole() {
+        return this.role;
+    }
+    setRole(value: AccountRoleEnum) {
+        this.role = value;
+    }
+    isGM() {
+        return this.role === AccountRoleEnum.GAME_MASTER;
+    }
+    isModerator() {
+        return this.role === AccountRoleEnum.MODERATOR;
+    }
+    hasStaffRole() {
+        return this.role !== AccountRoleEnum.PLAYER;
+    }
+    isInvincible() {
+        return this.invincible;
+    }
+    setInvincible(value: boolean) {
+        this.invincible = value;
     }
 }

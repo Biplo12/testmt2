@@ -3,6 +3,7 @@ import Connection from '../../../core/interface/networking/Connection';
 import Player from '@/core/domain/entities/game/player/Player';
 import PacketOut from '@/core/interface/networking/packets/packet/out/PacketOut';
 import PacketBidirectional from '@/core/interface/networking/packets/packet/bidirectional/PacketBidirectional';
+import { AccountRoleEnum } from '@/core/enum/AccountRoleEnum';
 
 // const hexString = (buffer) =>
 //     buffer.reduce((acc, byte, index) => {
@@ -14,6 +15,7 @@ import PacketBidirectional from '@/core/interface/networking/packets/packet/bidi
 
 export default class GameConnection extends Connection {
     private accountId: number;
+    private role: AccountRoleEnum = AccountRoleEnum.PLAYER;
     private player: Player;
 
     constructor({ logger, socket }) {
@@ -26,6 +28,14 @@ export default class GameConnection extends Connection {
 
     getAccountId() {
         return this.accountId;
+    }
+
+    setRole(value: AccountRoleEnum) {
+        this.role = value;
+    }
+
+    getRole() {
+        return this.role;
     }
 
     setPlayer(newPlayer: Player) {

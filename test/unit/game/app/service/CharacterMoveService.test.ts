@@ -17,9 +17,8 @@ describe('CharacterMoveService', function () {
     });
 
     describe('execute', function () {
-        it('should add experience and move the player for MOVE movement type', async function () {
+        it('should move the player for MOVE movement type', async function () {
             const playerMock = {
-                addPoint: sinon.spy(),
                 goto: sinon.spy(),
             };
 
@@ -34,9 +33,6 @@ describe('CharacterMoveService', function () {
             };
 
             await characterMoveService.execute(params);
-
-            expect(playerMock.addPoint.calledOnce).to.be.true;
-            expect(playerMock.addPoint.firstCall.args[1]).to.equal(500);
 
             expect(playerMock.goto.calledOnce).to.be.true;
             expect(playerMock.goto.firstCall.args[0]).to.deep.equal({

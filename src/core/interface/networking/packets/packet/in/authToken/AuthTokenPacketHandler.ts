@@ -1,3 +1,4 @@
+import { AccountRoleEnum } from '@/core/enum/AccountRoleEnum';
 import Logger from '@/core/infra/logger/Logger';
 import LoadCharactersService from '@/game/app/service/LoadCharactersService';
 import AuthenticateService from '@/game/domain/service/AuthenticateService';
@@ -42,9 +43,10 @@ export default class AuthTokenPacketHandler extends PacketHandler<AuthTokenPacke
             return;
         }
 
-        const { accountId } = authResult.getData();
+        const { accountId, role } = authResult.getData();
 
         connection.setAccountId(accountId);
+        connection.setRole((role as AccountRoleEnum) ?? AccountRoleEnum.PLAYER);
 
         const charactersResult = await this.loadCharactersService.execute({ accountId });
 

@@ -7,6 +7,7 @@ import Result from '@/core/domain/util/Result';
 type Token = {
     username: string;
     accountId: number;
+    role: string;
 };
 
 export default class AuthenticateService {

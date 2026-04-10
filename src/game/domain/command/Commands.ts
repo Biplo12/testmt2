@@ -27,6 +27,10 @@ import SelectCommand from './command/select/SelectCommand';
 import SelectCommandHandler from './command/select/SelectCommandHandler';
 import StatCommand from './command/stat/StatCommand';
 import StatCommandHandler from './command/stat/StatCommandHandler';
+import ImmortalCommand from './command/immortal/ImmortalCommand';
+import ImmortalCommandHandler from './command/immortal/ImmortalCommandHandler';
+import InvisibilityCommand from './command/invisibility/InvisibilityCommand';
+import InvisibilityCommandHandler from './command/invisibility/InvisibilityCommandHandler';
 import CommandHandler from './CommandHandler';
 
 export type CommandConstructor<T extends Command> = {
@@ -39,6 +43,7 @@ export type CommandConstructor<T extends Command> = {
 export type CommandMapValue<T extends Command> = {
     command: CommandConstructor<T>;
     createHandler: (params: any) => CommandHandler<T>;
+    gmOnly?: boolean;
 };
 
 export default () =>
@@ -48,6 +53,7 @@ export default () =>
             {
                 command: StatCommand,
                 createHandler: (params) => new StatCommandHandler(params),
+                gmOnly: true,
             },
         ],
         [
@@ -69,6 +75,7 @@ export default () =>
             {
                 command: ExperienceCommand,
                 createHandler: (params) => new ExperienceCommandHandler(params),
+                gmOnly: true,
             },
         ],
         [
@@ -76,6 +83,7 @@ export default () =>
             {
                 command: LevelCommand,
                 createHandler: (params) => new LevelCommandHandler(params),
+                gmOnly: true,
             },
         ],
         [
@@ -83,6 +91,7 @@ export default () =>
             {
                 command: GoldCommand,
                 createHandler: (params) => new GoldCommandHandler(params),
+                gmOnly: true,
             },
         ],
         [
@@ -90,6 +99,7 @@ export default () =>
             {
                 command: GotoCommand,
                 createHandler: (params) => new GotoCommandHandler(params),
+                gmOnly: true,
             },
         ],
         [
@@ -97,6 +107,7 @@ export default () =>
             {
                 command: ListCommand,
                 createHandler: (params) => new ListCommandHandler(params),
+                gmOnly: true,
             },
         ],
         [
@@ -104,6 +115,7 @@ export default () =>
             {
                 command: InvokeCommand,
                 createHandler: (params) => new InvokeCommandHandler(params),
+                gmOnly: true,
             },
         ],
         [
@@ -111,6 +123,7 @@ export default () =>
             {
                 command: ItemCommand,
                 createHandler: (params) => new ItemCommandHandler(params),
+                gmOnly: true,
             },
         ],
         [
@@ -118,6 +131,7 @@ export default () =>
             {
                 command: PrivilegeCommand,
                 createHandler: (params) => new PrivilegeCommandHandler(params),
+                gmOnly: true,
             },
         ],
         [
@@ -139,6 +153,22 @@ export default () =>
             {
                 command: RestartTownCommand,
                 createHandler: () => new RestartTownCommandHandler(),
+            },
+        ],
+        [
+            ImmortalCommand.getName(),
+            {
+                command: ImmortalCommand,
+                createHandler: () => new ImmortalCommandHandler(),
+                gmOnly: true,
+            },
+        ],
+        [
+            InvisibilityCommand.getName(),
+            {
+                command: InvisibilityCommand,
+                createHandler: () => new InvisibilityCommandHandler(),
+                gmOnly: true,
             },
         ],
     ]);

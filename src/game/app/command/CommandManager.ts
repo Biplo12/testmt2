@@ -17,7 +17,8 @@ export default class CommandManager {
     async execute({ message, player }) {
         //TODO: validate player flood chat, validate ban words
         if (message.startsWith('/help')) {
-            for (const { command } of this.commands.values()) {
+            for (const { command, gmOnly } of this.commands.values()) {
+                if (gmOnly && !player.hasStaffRole()) continue;
                 player.chat({
                     message: `Command: ${command.getName()} - Description: ${command.getDescription()} ${command.getExample() ? `- Example: ${command.getExample()}` : ''} `,
                     messageType: ChatMessageTypeEnum.INFO,
@@ -37,7 +38,15 @@ export default class CommandManager {
             return;
         }
 
-        const { command: Command, createHandler } = this.commands.get(commandName);
+        const { command: Command, createHandler, gmOnly } = this.commands.get(commandName);
+
+        if (gmOnly && !player.hasStaffRole()) {
+            player.chat({
+                message: `You do not have permission to use this command.`,
+                messageType: ChatMessageTypeEnum.INFO,
+            });
+            return;
+        }
 
         const command = new Command({ args });
         const commandHandler = createHandler(this.container);

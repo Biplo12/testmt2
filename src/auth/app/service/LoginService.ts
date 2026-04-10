@@ -44,6 +44,7 @@ export default class LoginService {
             JSON.stringify({
                 username: username,
                 accountId: account.id,
+                role: account.getRole(),
             }),
             TOKEN_EXPIRATION_SECS,
         );

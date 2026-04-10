@@ -41,6 +41,7 @@ export default class AccountRepository implements IAccountRepository {
             email,
             lastLogin,
             deleteCode,
+            role,
             createdAt,
             updatedAt,
             accountStatusCreatedAt,
@@ -57,6 +58,7 @@ export default class AccountRepository implements IAccountRepository {
             email,
             lastLogin,
             deleteCode,
+            role,
             createdAt,
             updatedAt,
             accountStatus: AccountStatus.create({

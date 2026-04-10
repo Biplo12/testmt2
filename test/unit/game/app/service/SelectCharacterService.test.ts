@@ -30,6 +30,7 @@ describe('SelectCharacterService', () => {
         };
         connectionStub = {
             setPlayer: sinon.stub(),
+            getRole: sinon.stub().returns('PLAYER'),
         };
 
         selectCharacterService = new SelectCharacterService({
@@ -57,6 +58,7 @@ describe('SelectCharacterService', () => {
             id: 1,
             name: 'testPlayer',
             setVirtualId: sinon.spy(),
+            setRole: sinon.spy(),
             getId: () => 1,
             sendDetails: sinon.spy(),
             addItems: sinon.spy(),

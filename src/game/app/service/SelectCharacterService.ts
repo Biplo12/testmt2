@@ -38,6 +38,7 @@ export default class SelectCharacterService {
         const player = this.playerFactory.create({ ...playerFounded });
 
         player.setVirtualId(this.world.generateVirtualId());
+        player.setRole(connection.getRole());
 
         connection.setPlayer(player);
 

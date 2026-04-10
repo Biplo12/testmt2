@@ -25,6 +25,7 @@ describe('AuthTokenPacketHandler', () => {
                 connectionMock.state = value;
             },
             setAccountId: () => {},
+            setRole: sinon.spy(),
         };
 
         packetMock = {
