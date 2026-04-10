@@ -1,0 +1,38 @@
+# IDE
+.idea
+
+# Server
+server/node_modules
+server/.env
+server/.idea
+server/.claude
+server/logs
+server/atlasinfo.txt
+server/*.msa
+server/motionData
+server/coverage
+server/.nyc_output
+server/dist
+server/CLAUDE.md
+
+# Client - ignore everything except source files
+client/*
+!client/pack/
+client/pack/*
+!client/pack/root/
+!client/pack/Index
+client/pack/root.eix
+client/pack/root.epk
+client/pack/root.eix.bak
+client/pack/root.epk.bak
+client/pack/root_override.*
+!client/repack.js
+!client/.gitignore
+!client/metin2.cfg
+!client/Eternexus/
+client/Eternexus/*
+!client/Eternexus/uiscript/
+client/Eternexus/uiscript/*
+!client/Eternexus/uiscript/uiscript/
+!client/Eternexus/uiscript/uiscript/*.py
+client/node_modules

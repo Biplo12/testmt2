@@ -1,0 +1,12 @@
+node_modules
+.env
+.idea
+.claude
+logs
+atlasinfo.txt
+*.msa
+motionData
+coverage
+.nyc_output
+dist
+CLAUDE.md

@@ -1,0 +1,26 @@
+# Ignore everything by default
+*
+
+# Track Python source files
+!pack/root/**/*.py
+!pack/root/*.py
+!Eternexus/uiscript/**/*.py
+
+# Track config and build tools
+!pack/Index
+!repack.js
+!metin2.cfg
+!locale.cfg
+!.gitignore
+
+# Track pack directory structure
+!pack/
+!pack/root/
+!Eternexus/
+!Eternexus/uiscript/
+!Eternexus/uiscript/uiscript/
+
+# Ignore generated packs (rebuilt by repack.js)
+pack/root.eix
+pack/root.epk
+pack/root_override.*

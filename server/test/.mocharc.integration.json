@@ -1,0 +1,10 @@
+{
+    "extension": ["ts"],
+    "spec": "test/integration/**/*.test.ts",
+    "color": true,
+    "file": "test/setup.integration.ts",
+    "timeout": 10000,
+    "require": [
+        "ts-node/register"
+    ]
+}

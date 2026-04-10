@@ -1,0 +1,11 @@
+{
+    "extension": [
+        "ts"
+    ],
+    "spec": "test/unit/**/*.test.ts",
+    "color": true,
+    "require": [
+        "ts-node/register"
+    ],
+    "recursive": true
+}
