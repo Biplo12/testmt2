@@ -9,29 +9,27 @@
 
 ### Sending
 - [x] Add `/whisper <playerName> <message>` command or use client's native whisper input
-- [x] Handle incoming whisper packet from client (`ChatInPacketHandler` with whisper type)
-- [x] Lookup target player by raw name via `World.getPlayerByName()`
-- [x] Send whisper message to target via `ChatOutPacket` with whisper message type
-- [x] Send confirmation/echo back to sender
+- [x] Handle incoming whisper packet from client (dedicated `WhisperInPacketHandler` with CG_WHISPER 0x13)
+- [x] Lookup target player by raw name via `World.getPlayerByName()` (strips color codes and role tags)
+- [x] Send whisper message to target via `WhisperOutPacket` (GC_WHISPER 0x22)
+- [x] No server-side echo to sender (client handles sent message display locally)
 
 ### Receiving
-- [x] Target player receives `ChatOutPacket` with sender name and message
-- [ ] Client opens whisper dialog window automatically (native TMP4 behavior)
+- [x] Target player receives `WhisperOutPacket` with sender name and message
+- [x] Client opens whisper dialog window automatically (native TMP4 behavior) - verified
 
 ### Error Handling
-- [x] Target player not found -> notify sender "Player not found"
-- [x] Target player is offline -> notify sender "Player is offline"
-- [x] Cannot whisper yourself -> reject with message
-- [x] Validate message length (not empty, max length)
+- [x] Target player not found -> notify sender via chat INFO message
+- [x] Target player is offline -> notify sender via chat INFO message
+- [x] Cannot whisper yourself -> reject with chat INFO message
+- [x] Validate message (not empty) via `WhisperInPacketValidator`
 
 ### GM Differences
+- [x] GM whisper shows `[GM]` tag with role color in whisper window title (via `getRoleTag()` color codes in partnerName)
 - [ ] GM can whisper to invisible/hidden players
-- [ ] Whisper window icon for GM: use text placeholder "GM" or reuse the YMIR indicator icon that floats above GM characters (client-side decision - swap later for custom icon if needed)
-- [ ] Optional: GM whispers have distinct color in chat window
 - [ ] Optional: `/whisperall <message>` broadcast whisper to all online players (GM only)
 
 ### Visual / Client
-- [ ] Verify TMP4 client whisper window opens correctly on receive
-- [ ] Verify sender name displays properly (with role color codes already applied via getName())
-- [ ] Whisper window GM icon: either text "GM" placeholder or the same affect-based icon from above the character - to be replaced with custom icon later by client artist
+- [x] Verify TMP4 client whisper window opens correctly on receive - verified
+- [x] Verify sender name displays properly with role color codes - verified
 - [ ] Verify whisper tab/history works in client chat panel
