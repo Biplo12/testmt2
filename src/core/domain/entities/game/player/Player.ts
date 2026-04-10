@@ -855,6 +855,25 @@ export default class Player extends Character {
         );
     }
 
+    updateName() {
+        for (const entity of this.nearbyEntities.values()) {
+            if (entity instanceof Player) {
+                entity.connection.send(
+                    new CharacterInfoPacket({
+                        vid: this.virtualId,
+                        empireId: this.getEmpire(),
+                        level: this.getLevel(),
+                        playerName: this.getName(),
+                        guildId: 0,
+                        mountId: 0,
+                        pkMode: 0,
+                        rankPoints: 0,
+                    }),
+                );
+            }
+        }
+    }
+
     updateView() {
         this.connection.send(
             new CharacterUpdatePacket({

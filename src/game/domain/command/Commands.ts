@@ -31,6 +31,8 @@ import ImmortalCommand from './command/immortal/ImmortalCommand';
 import ImmortalCommandHandler from './command/immortal/ImmortalCommandHandler';
 import InvisibilityCommand from './command/invisibility/InvisibilityCommand';
 import InvisibilityCommandHandler from './command/invisibility/InvisibilityCommandHandler';
+import NameColorCommand from './command/namecolor/NameColorCommand';
+import NameColorCommandHandler from './command/namecolor/NameColorCommandHandler';
 import CommandHandler from './CommandHandler';
 
 export type CommandConstructor<T extends Command> = {
@@ -168,6 +170,14 @@ export default () =>
             {
                 command: InvisibilityCommand,
                 createHandler: () => new InvisibilityCommandHandler(),
+                gmOnly: true,
+            },
+        ],
+        [
+            NameColorCommand.getName(),
+            {
+                command: NameColorCommand,
+                createHandler: (params) => new NameColorCommandHandler(params),
                 gmOnly: true,
             },
         ],
