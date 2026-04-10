@@ -8,21 +8,21 @@
 ## Whisper System (DM / Private Messages)
 
 ### Sending
-- [ ] Add `/whisper <playerName> <message>` command or use client's native whisper input
-- [ ] Handle incoming whisper packet from client (`ChatInPacketHandler` with whisper type)
-- [ ] Lookup target player by raw name via `World.getPlayerByName()`
-- [ ] Send whisper message to target via `ChatOutPacket` with whisper message type
-- [ ] Send confirmation/echo back to sender
+- [x] Add `/whisper <playerName> <message>` command or use client's native whisper input
+- [x] Handle incoming whisper packet from client (`ChatInPacketHandler` with whisper type)
+- [x] Lookup target player by raw name via `World.getPlayerByName()`
+- [x] Send whisper message to target via `ChatOutPacket` with whisper message type
+- [x] Send confirmation/echo back to sender
 
 ### Receiving
-- [ ] Target player receives `ChatOutPacket` with sender name and message
+- [x] Target player receives `ChatOutPacket` with sender name and message
 - [ ] Client opens whisper dialog window automatically (native TMP4 behavior)
 
 ### Error Handling
-- [ ] Target player not found -> notify sender "Player not found"
-- [ ] Target player is offline -> notify sender "Player is offline"
-- [ ] Cannot whisper yourself -> reject with message
-- [ ] Validate message length (not empty, max length)
+- [x] Target player not found -> notify sender "Player not found"
+- [x] Target player is offline -> notify sender "Player is offline"
+- [x] Cannot whisper yourself -> reject with message
+- [x] Validate message length (not empty, max length)
 
 ### GM Differences
 - [ ] GM can whisper to invisible/hidden players
