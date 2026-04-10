@@ -1,7 +1,7 @@
 import GameEntity from '@/core/domain/entities/game/GameEntity';
-import { AccountRoleEnum, ROLE_NAME_PREFIX, isStaffRole } from '@/core/enum/AccountRoleEnum';
+import { AccountRoleEnum, getRoleTag, getRoleColor, isStaffRole } from '@/core/enum/AccountRoleEnum';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
-import { NameColorEnum } from '@/core/enum/NameColorEnum';
+import { NameColorEnum, colorize } from '@/core/enum/NameColorEnum';
 import { GameConfig } from '@/game/infra/config/GameConfig';
 import Inventory from '../inventory/Inventory';
 import InventoryEventsEnum from '../inventory/events/InventoryEventsEnum';
@@ -1497,11 +1497,7 @@ export default class Player extends Character {
     }
     setRole(value: AccountRoleEnum) {
         this.role = value;
-        if (value === AccountRoleEnum.GAME_MASTER) {
-            this.nameColor = NameColorEnum.GOLDEN;
-        } else if (value === AccountRoleEnum.MODERATOR) {
-            this.nameColor = NameColorEnum.BLUE;
-        }
+        this.nameColor = getRoleColor(value);
     }
     isGM() {
         return this.role === AccountRoleEnum.GAME_MASTER;
@@ -1519,8 +1515,12 @@ export default class Player extends Character {
         this.nameColor = value;
     }
     getName() {
-        const prefix = ROLE_NAME_PREFIX[this.role];
-        return prefix ? `${prefix}${this.name}` : this.name;
+        const tag = getRoleTag(this.role);
+        const displayName = tag ? `${tag}${this.name}` : this.name;
+        if (this.nameColor !== NameColorEnum.DEFAULT && this.nameColor !== getRoleColor(this.role)) {
+            return colorize(displayName, this.nameColor);
+        }
+        return displayName;
     }
     isInvincible() {
         return this.invincible;

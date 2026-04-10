@@ -1,17 +1,27 @@
+import { NameColorEnum, colorize } from './NameColorEnum';
+
 export enum AccountRoleEnum {
     PLAYER = 'PLAYER',
     MODERATOR = 'MODERATOR',
     GAME_MASTER = 'GAME_MASTER',
 }
 
-export const ROLE_NAME_PREFIX: Record<AccountRoleEnum, string> = {
-    [AccountRoleEnum.PLAYER]: '',
-    [AccountRoleEnum.MODERATOR]: '[MOD]',
-    [AccountRoleEnum.GAME_MASTER]: '[GM]',
+const ROLE_CONFIG: Record<AccountRoleEnum, { tag: string; color: NameColorEnum; staff: boolean }> = {
+    [AccountRoleEnum.PLAYER]: { tag: '', color: NameColorEnum.DEFAULT, staff: false },
+    [AccountRoleEnum.MODERATOR]: { tag: '[MOD]', color: NameColorEnum.BLUE, staff: true },
+    [AccountRoleEnum.GAME_MASTER]: { tag: '[GM]', color: NameColorEnum.RED, staff: true },
 };
 
-const STAFF_ROLES: Set<AccountRoleEnum> = new Set([AccountRoleEnum.GAME_MASTER, AccountRoleEnum.MODERATOR]);
+export function getRoleTag(role: AccountRoleEnum): string {
+    const config = ROLE_CONFIG[role];
+    if (!config?.tag) return '';
+    return colorize(config.tag, config.color);
+}
+
+export function getRoleColor(role: AccountRoleEnum): NameColorEnum {
+    return ROLE_CONFIG[role]?.color ?? NameColorEnum.DEFAULT;
+}
 
 export function isStaffRole(role: AccountRoleEnum): boolean {
-    return STAFF_ROLES.has(role);
+    return ROLE_CONFIG[role]?.staff ?? false;
 }
