@@ -33,7 +33,9 @@
 ### GM Differences
 - [x] GM whisper shows `[GM]` tag with role color in whisper window title (via `getRoleTag()` color codes in partnerName)
 - [x] GM can whisper to invisible/hidden players (works by default - World lookup ignores visibility)
-- [ ] Whisper window icon: when GM sends whisper, show GM/YMIR icon instead of default envelope icon (client-side change)
+- [x] Whisper window icon: GM YMIR icon replaces envelope on whisper button (client-side, transparent.tga + ExpandedImageBox overlay)
+- [x] GM whisper dialog shows GM mark icon in corner (type=5 triggers `SetGameMasterLook`)
+- [x] GM color changed from red (FF0000) to golden (FFA200)
 - [x] `/whisperall <message>` broadcast whisper to all online players (GM only)
 
 ### Bugs

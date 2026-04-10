@@ -1,6 +1,6 @@
 # Whisper System (Private Messages)
 
-Server-side implementation for private messaging between players using the native Metin2 whisper protocol.
+Server-side and client-side implementation for private messaging between players using the native Metin2 whisper protocol.
 
 ## Protocol
 
@@ -31,13 +31,15 @@ Sent by the server to deliver a whisper message or error to a client.
 
 #### Whisper Types (`WhisperTypeEnum`)
 
-| Value | Name        | Description                                        |
-|-------|-------------|----------------------------------------------------|
-| 0     | `NORMAL`    | Regular whisper message                            |
-| 1     | `NOT_FOUND` | Target player not found / offline                  |
-| 2     | `BLOCKED`   | Target has blocked whispering (client-side display)|
+| Value | Name           | Description                                        |
+|-------|----------------|----------------------------------------------------|
+| 0     | `NORMAL`       | Regular whisper message                            |
+| 1     | `NOT_FOUND`    | Target player not found / offline                  |
+| 2     | `BLOCKED`      | Target has blocked whispering (client-side display)|
+| 3     | `SENDER_BLOCKED` | Sender blocked (client-side display)             |
+| 5     | `GM`           | GM whisper — triggers `SetGameMasterLook` on client|
 
-> **Note:** GM identity in whispers is conveyed through the `[GM]` tag in the `partnerName` field (e.g. `[GM]biplo12`), not through the type field. Type=2 triggers "has blocked whispering" in the TMP4 client.
+> **Note:** Types 1-3 route to `OnRecvWhisperError` on the client. Types 0 and 5 route to `OnRecvWhisper`. Type 5 triggers `RegisterGameMasterName()` and shows YMIR icon in whisper dialog.
 
 ## Flow
 
@@ -45,46 +47,82 @@ Sent by the server to deliver a whisper message or error to a client.
 
 1. Client sends `CG_WHISPER` (`0x13`) with target name and message
 2. `WhisperInPacketHandler` validates the packet
-3. Server looks up target player via `World.getPlayerByName()`
-4. If found: sends `GC_WHISPER` to **target** (with sender's name) and **echo** to sender (with target's name)
-5. If not found: sends `GC_WHISPER` with `type=NOT_FOUND` to sender
+3. Server strips color codes and role tags from target name for lookup
+4. Server looks up target player via `World.getPlayerByName()`
+5. If found: sends `GC_WHISPER` to **target only** (no echo to sender — client handles sent message display locally)
+6. If not found: sends chat INFO message to sender
+7. If self-whisper: silently ignored (no message)
 
 ### Sending a Whisper (via /whisper command)
 
 1. Player types `/whisper <playerName> <message>` in chat
 2. Client sends `CHAT_IN` (`0x03`) with `messageType=NORMAL`
 3. `ChatInPacketHandler` routes to `CommandManager`
-4. `WhisperCommandHandler` performs same lookup and sends `GC_WHISPER` packets
+4. `WhisperCommandHandler` performs same lookup and sends `GC_WHISPER` to target
 
 ## Error Handling
 
 | Scenario               | Server Response                                           |
 |------------------------|-----------------------------------------------------------|
-| Target not found       | `GC_WHISPER` with `type=NOT_FOUND` to sender              |
-| Target offline         | `GC_WHISPER` with `type=NOT_FOUND` to sender              |
-| Whisper to self        | `GC_WHISPER` with `type=NOT_FOUND` to sender              |
+| Target not found       | Chat INFO message: "Player X is not online."              |
+| Target offline         | Chat INFO message: "Player X is not online."              |
+| Whisper to self        | Silently ignored                                          |
 | Invalid packet         | Connection closed                                         |
 
 ## GM Features
 
-- GM identity is shown via the `[GM]` tag with color codes in the `partnerName` field (e.g. `|cFFFF0000[GM]biplo12`)
-- The tag is added using `getRoleTag()` which includes color codes from `ROLE_CONFIG`
-- When a reply is received from a tagged name, the handler strips color codes and role tags via regex before player lookup
-- All whispers use `type=NORMAL` (0) regardless of sender role — type=2 means "blocked" in TMP4 client
-- GM can whisper invisible/hidden players (World lookup ignores visibility affects)
-- `/whisperall <message>` — GM-only command that broadcasts a whisper to all online players
+### Server-side
+- GM whispers sent with `type=GM` (5) — triggers GM look on client
+- GM identity shown via `[GM]` tag with golden color (`FFA200`) in `partnerName`
+- Tag added using `getRoleTag()` with color codes from `ROLE_CONFIG`
+- Handler strips color codes (`|cFF......`) and role tags (`[GM]`, `[MOD]`) from incoming target names via regex before player lookup
+- GM can whisper invisible/hidden players (World lookup ignores visibility)
+- `/whisperall <message>` — GM-only command that broadcasts whisper to all online players
 
-## Key Files
+### Client-side
+- `type=5` triggers `RegisterGameMasterName(name)` and `SetGameMasterLook()` (YMIR icon in dialog corner)
+- `IsGameMasterName()` also detects GM by `[GM]`/`[MOD]` tag prefix (works when manually typing GM name)
+- GM whisper button: envelope replaced with YMIR icon (`ymirred.tga` via `ExpandedImageBox` overlay, `transparent.tga` hides envelope)
+- GM tooltip color: golden `0xFFFFA200`
+
+## Client Pack Workflow
+
+Client Python files are in `client/pack/root/`. The client reads from encrypted `root.epk`, not loose files.
+
+### How to apply client changes:
+
+1. Edit files in `client/pack/root/` (e.g. `interfacemodule.py`, `uiwhisper.py`)
+2. Open `client/Eternexus/EterNexus.exe`
+3. File → **Pack Archive** → select folder `client/pack/root`
+4. EterNexus overwrites `client/pack/root.eix` and `client/pack/root.epk`
+5. Restart client
+
+### Important: `serverinfo.py`
+
+`client/pack/root/serverinfo.py` contains server connection config. When repacking, make sure it has the correct values:
+- `SERVER_IP = "localhost"` (or your server IP)
+- `PORT_AUTH = 11002`
+- `PORT_1 = 13001`
+
+### Client files modified for whisper system:
+
+| File | Changes |
+|------|---------|
+| `client/pack/root/interfacemodule.py` | GM whisper button (YMIR icon overlay, transparent envelope), `IsGameMasterName()` tag detection, `__CheckGameMaster()` uses `IsGameMasterName()` |
+| `client/pack/root/uiwhisper.py` | `OpenWithTarget()` auto-detects GM by `[GM]`/`[MOD]` tag and applies `SetGameMasterLook()` |
+| `client/pack/root/transparent.tga` | 1x1 transparent image used to hide envelope button visual |
+
+## Key Server Files
 
 | File | Description |
 |------|-------------|
-| `src/core/interface/networking/packets/packet/in/whisper/WhisperInPacket.ts` | Inbound whisper packet |
-| `src/core/interface/networking/packets/packet/in/whisper/WhisperInPacketHandler.ts` | Handles incoming whispers |
-| `src/core/interface/networking/packets/packet/in/whisper/WhisperInPacketValidator.ts` | Validates whisper packets |
-| `src/core/interface/networking/packets/packet/out/WhisperOutPacket.ts` | Outbound whisper packet + `WhisperTypeEnum` |
-| `src/game/domain/command/command/whisper/WhisperCommand.ts` | `/whisper` slash command definition |
-| `src/game/domain/command/command/whisper/WhisperCommandHandler.ts` | `/whisper` command handler |
-| `src/game/domain/command/command/whisper/WhisperCommandValidator.ts` | `/whisper` command validation |
-| `src/core/domain/entities/game/player/Player.ts` | `whisper()` method on Player |
-| `src/core/enum/ChatMessageTypeEnum.ts` | `WHISPER = 16` (chat enum, used internally) |
-| `src/core/enum/PacketHeaderEnum.ts` | `WHISPER: 0x13`, `WHISPER_OUT: 0x22` |
+| `server/src/core/interface/networking/packets/packet/in/whisper/WhisperInPacket.ts` | Inbound whisper packet |
+| `server/src/core/interface/networking/packets/packet/in/whisper/WhisperInPacketHandler.ts` | Handles incoming whispers |
+| `server/src/core/interface/networking/packets/packet/in/whisper/WhisperInPacketValidator.ts` | Validates whisper packets |
+| `server/src/core/interface/networking/packets/packet/out/WhisperOutPacket.ts` | Outbound whisper packet + `WhisperTypeEnum` |
+| `server/src/game/domain/command/command/whisper/WhisperCommand.ts` | `/whisper` slash command |
+| `server/src/game/domain/command/command/whisper/WhisperCommandHandler.ts` | `/whisper` handler |
+| `server/src/game/domain/command/command/whisperall/WhisperAllCommandHandler.ts` | `/whisperall` GM broadcast |
+| `server/src/core/domain/entities/game/player/Player.ts` | `whisper()` method |
+| `server/src/core/enum/PacketHeaderEnum.ts` | `WHISPER: 0x13`, `WHISPER_OUT: 0x22` |
+| `server/src/core/enum/AccountRoleEnum.ts` | GM role config with golden color (`FFA200`) |
