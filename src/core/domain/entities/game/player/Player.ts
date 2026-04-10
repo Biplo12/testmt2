@@ -1,7 +1,7 @@
 import GameEntity from '@/core/domain/entities/game/GameEntity';
-import { AccountRoleEnum } from '@/core/enum/AccountRoleEnum';
+import { AccountRoleEnum, ROLE_NAME_PREFIX, isStaffRole } from '@/core/enum/AccountRoleEnum';
 import { EntityTypeEnum } from '@/core/enum/EntityTypeEnum';
-import { NameColorEnum, getNameColorPrefix } from '@/core/enum/NameColorEnum';
+import { NameColorEnum } from '@/core/enum/NameColorEnum';
 import { GameConfig } from '@/game/infra/config/GameConfig';
 import Inventory from '../inventory/Inventory';
 import InventoryEventsEnum from '../inventory/events/InventoryEventsEnum';
@@ -246,6 +246,11 @@ export default class Player extends Character {
             rotation: this.getRotation(),
         });
         this.applyInvisibleAffect(3);
+
+        if (this.hasStaffRole()) {
+            this.setAffectFlag(AffectBitsTypeEnum.YMIR);
+            this.updateView();
+        }
 
         this.chat({
             messageType: ChatMessageTypeEnum.INFO,
@@ -1505,7 +1510,7 @@ export default class Player extends Character {
         return this.role === AccountRoleEnum.MODERATOR;
     }
     hasStaffRole() {
-        return this.role !== AccountRoleEnum.PLAYER;
+        return isStaffRole(this.role);
     }
     getNameColor() {
         return this.nameColor;
@@ -1514,7 +1519,7 @@ export default class Player extends Character {
         this.nameColor = value;
     }
     getName() {
-        const prefix = getNameColorPrefix(this.nameColor);
+        const prefix = ROLE_NAME_PREFIX[this.role];
         return prefix ? `${prefix}${this.name}` : this.name;
     }
     isInvincible() {

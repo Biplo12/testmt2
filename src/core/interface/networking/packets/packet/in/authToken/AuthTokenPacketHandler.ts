@@ -1,4 +1,4 @@
-import { AccountRoleEnum } from '@/core/enum/AccountRoleEnum';
+import { AccountRoleEnum, ROLE_NAME_PREFIX } from '@/core/enum/AccountRoleEnum';
 import Logger from '@/core/infra/logger/Logger';
 import LoadCharactersService from '@/game/app/service/LoadCharactersService';
 import AuthenticateService from '@/game/domain/service/AuthenticateService';
@@ -60,10 +60,12 @@ export default class AuthTokenPacketHandler extends PacketHandler<AuthTokenPacke
                     }),
                 );
 
+                const rolePrefix = ROLE_NAME_PREFIX[role as AccountRoleEnum] ?? '';
+
                 const characterInfoPacket = new CharactersInfoPacket();
                 players.forEach((player) => {
                     characterInfoPacket.addCharacter(player.slot, {
-                        name: player.name,
+                        name: `${rolePrefix}${player.name}`,
                         playerClass: player.playerClass,
                         bodyPart: player.bodyPart,
                         hairPart: player.hairPart,
