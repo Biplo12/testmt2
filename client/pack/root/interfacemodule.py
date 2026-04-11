@@ -1557,7 +1557,7 @@ class Interface(object):
 			gmMark.SetParent(whisperButton)
 			gmMark.AddFlag("not_pick")
 			gmMark.LoadImage(app.GetLocalePath() + "/effect/ymirred.tga")
-			gmMark.SetScale(0.25, 0.25)
+			gmMark.SetScale(22.5, 22.5)
 			gmMark.SetPosition(-10, 0)
 			gmMark.Show()
 			whisperButton.gmMark = gmMark

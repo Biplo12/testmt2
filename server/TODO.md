@@ -50,3 +50,4 @@
 - [x] Verify TMP4 client whisper window opens correctly on receive - verified
 - [x] Verify sender name displays properly with role color codes - verified
 - [ ] Verify whisper tab/history works in client chat panel
+- [ ] GM whisper: recipient sees no blinking envelope icon - only name text shows, no visual notification (client-side `__MakeWhisperButton` in `interfacemodule.py`)

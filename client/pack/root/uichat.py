@@ -254,7 +254,105 @@ class ChatLine(ui.EditLine):
 
 		self.lastShoutTime = app.GetTime()
 
+	def __ReLoadModule(self, name):
+		import sys, imp
+		dev_root = 'pack/root'
+		file_path = dev_root + '/' + name + '.py'
+
+		# Read file and compile with encoding declaration for Korean comments
+		f = open(file_path, 'rb')
+		data = f.read()
+		f.close()
+		data = '# -*- coding: utf-8 -*-\n' + '\n'.join(data.split('\r\n'))
+		code = compile(data, name + '.py', 'exec')
+
+		# Delete old module, create fresh one
+		if name in sys.modules:
+			del sys.modules[name]
+		new_mod = imp.new_module(name)
+		new_mod.__name__ = name
+		sys.modules[name] = new_mod
+		exec code in new_mod.__dict__
+
+		return new_mod
+
+	def __DevReload(self, text):
+		args = text.split()
+		cmd = args[0]
+
+		if cmd == '/r' and len(args) > 1:
+			name = args[1]
+			try:
+				new_mod = self.__ReLoadModule(name)
+				# Swap __class__ on matching window instances in interface
+				try:
+					intf = self.interface
+					if intf:
+						for attr_name in dir(intf):
+							wnd = getattr(intf, attr_name, None)
+							if wnd and hasattr(wnd, '__class__'):
+								cls_name = wnd.__class__.__name__
+								new_cls = getattr(new_mod, cls_name, None)
+								if new_cls:
+									wnd.__class__ = new_cls
+				except:
+					pass
+				chat.AppendChat(chat.CHAT_TYPE_INFO, "[DEV] Reloaded: " + name)
+			except Exception, e:
+				chat.AppendChat(chat.CHAT_TYPE_INFO, "[DEV] Error: " + str(e))
+			return True
+
+		elif cmd == '/ra':
+			import sys, os
+			dev_root = 'pack/root'
+			# Init mtime tracker on first use
+			if not hasattr(self, '_dev_mtimes'):
+				self._dev_mtimes = {}
+				# Record current mtimes of all loaded modules
+				for n in sys.modules.keys():
+					p = dev_root + '/' + n + '.py'
+					try:
+						self._dev_mtimes[n] = os.path.getmtime(p)
+					except:
+						pass
+
+			count = 0
+			intf = getattr(self, 'interface', None)
+			for name in list(sys.modules.keys()):
+				if name == 'uichat':
+					continue
+				file_path = dev_root + '/' + name + '.py'
+				try:
+					mtime = os.path.getmtime(file_path)
+					old_mtime = self._dev_mtimes.get(name, mtime)
+					if mtime > old_mtime:
+						new_mod = self.__ReLoadModule(name)
+						self._dev_mtimes[name] = mtime
+						if intf:
+							for attr_name in dir(intf):
+								wnd = getattr(intf, attr_name, None)
+								if wnd and hasattr(wnd, '__class__'):
+									cls_name = wnd.__class__.__name__
+									new_cls = getattr(new_mod, cls_name, None)
+									if new_cls:
+										wnd.__class__ = new_cls
+						chat.AppendChat(chat.CHAT_TYPE_INFO, "[DEV] Reloaded: " + name)
+						count += 1
+				except:
+					pass
+			if count:
+				chat.AppendChat(chat.CHAT_TYPE_INFO, "[DEV] Done: %d modules" % count)
+			else:
+				chat.AppendChat(chat.CHAT_TYPE_INFO, "[DEV] No changed files")
+			return True
+
+		return False
+
 	def __SendTalkingChatPacket(self, text):
+		if text.startswith('/r') and self.__DevReload(text):
+			self.__ResetChat()
+			return
+
 		self.__SendChatPacket(text, chat.CHAT_TYPE_TALKING)
 		self.__ResetChat()
 
@@ -617,7 +715,7 @@ class ChatWindow(ui.Window):
 		self.scrollBar = scrollBar
 
 		self.Refresh()
-		self.chatInputSet.RefreshPosition() # RTL ½Ã À§Ä¡¸¦ Á¦´ë·Î ÀâÀ¸·Á¸é À§Ä¡ °»½ÅÀÌ ÇÊ¿äÇÏ´Ù
+		self.chatInputSet.RefreshPosition() # RTL ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½Ï´ï¿½
 	
 	def __del__(self):
 		ui.Window.__del__(self)
