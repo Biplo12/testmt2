@@ -52,6 +52,53 @@
 - [ ] Verify whisper tab/history works in client chat panel
 - [ ] GM whisper: recipient sees no blinking envelope icon - only name text shows, no visual notification (client-side `__MakeWhisperButton` in `interfacemodule.py`)
 
+## Chat System
+
+### Enum Verification
+- [ ] Verify chat type enum values match TMP4 client — server uses standard Metin2 values (NORMAL=0, INFO=1, NOTICE=2, GROUP=3, GUILD=4, COMMAND=5, SHOUT=6, BIG_NOTICE=8). If client differs, remap server enum.
+
+### Normal Chat (Local)
+- [ ] Verify normal chat broadcasts correctly to nearby players (test with 2+ players)
+- [x] Broadcast normal chat to nearby players (area/local) via `nearbyEntities`
+- [x] Include sender VID for speech bubble above character
+- [x] Server prefixes player name to message
+- [x] Commands (`/`) not broadcast — handled separately by CommandManager
+- [x] Max message length validation (512 chars, Metin2 default `CHAT_MAX_LEN`)
+
+### Shout Chat (Server-Wide)
+- [x] Broadcast shout to ALL players on the server (global, not map-only) — verified
+- [x] Cross-map delivery: vid=0 for players on different map (TMP4 client drops unknown VIDs)
+- [x] 15-second cooldown stored on Player entity (persists across packet handler instances) — verified
+- [x] Minimum level 15 required (constant `SHOUT_MIN_LEVEL`)
+- [x] Cooldown remaining shown in error message
+- [x] Staff bypass both level check and cooldown (server + client) — verified
+- [x] Client-side cooldown removed (server handles it)
+
+### Notice (Server-Wide)
+- [ ] Verify `/notice` displays in notice color in client chat panel
+- [x] `/notice <message>` GM command broadcasts NOTICE type to all players
+- [x] Server-only type — client-sent NOTICE packets ignored
+
+### Big Notice (Server-Wide, Centered Screen)
+- [ ] Verify `/bignotice` displays large centered text box on client screen (like OX quiz, Image 1 in chat-system notes)
+- [x] `BIG_NOTICE` type added to enum (value 8, standard Metin2)
+- [x] `/bignotice <message>` GM command broadcasts BIG_NOTICE type to all players
+
+### Party Chat
+- [ ] Implement party/group system
+- [x] Placeholder: "You are not in a party" INFO message
+
+### Guild Chat
+- [ ] Implement guild system
+- [x] Placeholder: "You are not in a guild" INFO message
+
+### Server-Only Types
+- [x] INFO — server→client only, client packets ignored
+- [x] COMMAND — server→client only, client packets ignored
+
+### Bugs / Issues
+- [x] ~~Staff shout bypass~~ — fixed: client-side cooldown removed, server handles all validation. GM confirmed working.
+
 ## Empire / Kingdom System
 
 - [ ] Empire selection during character creation (Shinsoo, Chunjo, Jinno)

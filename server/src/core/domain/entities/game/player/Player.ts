@@ -79,6 +79,7 @@ export default class Player extends Character {
     private nameColor: NameColorEnum = NameColorEnum.DEFAULT;
     private invincible: boolean = false;
     private lastPlayTime: number = performance.now();
+    private lastShoutTime: number = 0;
 
     private readonly config: GameConfig;
     private readonly inventory: Inventory;
@@ -801,6 +802,17 @@ export default class Player extends Character {
         );
     }
 
+    sendChat({ message, messageType, vid, empireId }: { message: string; messageType: ChatMessageTypeEnum; vid: number; empireId: number }) {
+        this.connection.send(
+            new ChatOutPacket({
+                messageType,
+                message,
+                vid,
+                empireId,
+            }),
+        );
+    }
+
     whisper({ partnerName, message, type }: { partnerName: string; message: string; type: WhisperTypeEnum }) {
         this.connection.send(new WhisperOutPacket({ type, partnerName, message }));
     }
@@ -1512,6 +1524,12 @@ export default class Player extends Character {
     }
     hasStaffRole() {
         return isStaffRole(this.role);
+    }
+    getLastShoutTime() {
+        return this.lastShoutTime;
+    }
+    setLastShoutTime(value: number) {
+        this.lastShoutTime = value;
     }
     getNameColor() {
         return this.nameColor;

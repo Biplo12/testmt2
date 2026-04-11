@@ -37,6 +37,10 @@ import WhisperCommand from './command/whisper/WhisperCommand';
 import WhisperCommandHandler from './command/whisper/WhisperCommandHandler';
 import WhisperAllCommand from './command/whisperall/WhisperAllCommand';
 import WhisperAllCommandHandler from './command/whisperall/WhisperAllCommandHandler';
+import NoticeCommand from './command/notice/NoticeCommand';
+import NoticeCommandHandler from './command/notice/NoticeCommandHandler';
+import BigNoticeCommand from './command/bignotice/BigNoticeCommand';
+import BigNoticeCommandHandler from './command/bignotice/BigNoticeCommandHandler';
 import CommandHandler from './CommandHandler';
 
 export type CommandConstructor<T extends Command> = {
@@ -197,6 +201,22 @@ export default () =>
             {
                 command: WhisperAllCommand,
                 createHandler: (params) => new WhisperAllCommandHandler(params),
+                gmOnly: true,
+            },
+        ],
+        [
+            NoticeCommand.getName(),
+            {
+                command: NoticeCommand,
+                createHandler: (params) => new NoticeCommandHandler(params),
+                gmOnly: true,
+            },
+        ],
+        [
+            BigNoticeCommand.getName(),
+            {
+                command: BigNoticeCommand,
+                createHandler: (params) => new BigNoticeCommandHandler(params),
                 gmOnly: true,
             },
         ],
