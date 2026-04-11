@@ -41,6 +41,33 @@ import marshal
 import imp
 import pack
 
+# Dev mode: load .py files from disk instead of pack
+# Avoids 'import os' - uses only builtins safe in early bootstrap
+_DEV_MODE = False
+_DEV_ROOT = 'pack/root'
+try:
+	_f = open('dev_mode', 'r')
+	_dev_path = _f.read().strip()
+	_f.close()
+	_DEV_MODE = True
+	if _dev_path:
+		_DEV_ROOT = _dev_path
+	dbg.Trace('DEV MODE enabled, root: ' + _DEV_ROOT + '\\n')
+except:
+	pass
+
+def _dev_read_file(filename):
+	if not _DEV_MODE:
+		return None
+	disk_path = _DEV_ROOT + '/' + filename
+	try:
+		f = open(disk_path, 'rb')
+		data = f.read()
+		f.close()
+		return data
+	except:
+		return None
+
 class pack_file_iterator(object):
 	def __init__(self, packfile):
 		self.pack_file = packfile
@@ -57,6 +84,16 @@ class pack_file(object):
 
 	def __init__(self, filename, mode = 'rb'):
 		assert mode in ('r', 'rb')
+
+		# Dev mode: try disk first
+		disk_data = _dev_read_file(filename)
+		if disk_data is not None:
+			self.data = disk_data
+			if mode == 'r':
+				self.data = _chr(10).join(self.data.split(_chr(13)+_chr(10)))
+			return
+
+		# Original: read from pack
 		if not pack.Exist(filename):
 			raise IOError, 'No file or directory'
 		self.data = pack.Get(filename)
@@ -124,14 +161,27 @@ def __pack_import(name,globals=None,locals=None,fromlist=None):
 
 	filename = name + '.py'
 
+	# Dev mode: try disk first
+	if _DEV_MODE:
+		disk_data = _dev_read_file(filename)
+		if disk_data is not None:
+			dbg.Trace('DEV: importing from disk %s\\n' % name)
+			try:
+				disk_text = '# -*- coding: utf-8 -*-' + _chr(10) + _chr(10).join(disk_data.split(_chr(13)+_chr(10)))
+				newmodule = _process_result(compile(disk_text, filename, 'exec'), name)
+				module_do(newmodule)
+				return newmodule
+			except:
+				dbg.TraceError('DEV: error in %s\\n' % filename)
+
+	# Original: import from pack
 	if pack.Exist(filename):
 		dbg.Trace('importing from pack %s\\n' % name)
 
-		newmodule = _process_result(compile(pack_file(filename,'r').read(),filename,'exec'),name)		
+		newmodule = _process_result(compile(pack_file(filename,'r').read(),filename,'exec'),name)
 
 		module_do(newmodule)
 		return newmodule
-		#return imp.load_module(name, pack_file(filename,'r'),filename,('.py','r',imp.PY_SOURCE))
 	else:
 		dbg.Trace('importing from lib %s\\n' % name)
 		return old_import(name,globals,locals,fromlist)
@@ -198,6 +248,7 @@ def exec_add_module_do(mod):
 import __builtin__
 __builtin__.__import__ = __pack_import
 module_do = exec_add_module_do
+
 
 """
 #

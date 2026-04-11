@@ -50,3 +50,14 @@
 - [x] Verify TMP4 client whisper window opens correctly on receive - verified
 - [x] Verify sender name displays properly with role color codes - verified
 - [ ] Verify whisper tab/history works in client chat panel
+- [ ] GM whisper: recipient sees no blinking envelope icon - only name text shows, no visual notification (client-side `__MakeWhisperButton` in `interfacemodule.py`)
+
+## Empire / Kingdom System
+
+- [ ] Empire selection during character creation (Shinsoo, Chunjo, Jinno)
+- [ ] Store empire ID on account/character in database
+- [ ] Empire-based spawn points (different starting maps per empire)
+- [ ] Empire-based PvP rules (cross-empire hostility)
+- [ ] Empire name colors in chat/nametags
+- [ ] Empire flag/icon display on characters
+- [ ] Empire-restricted maps and zones

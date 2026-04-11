@@ -5,6 +5,7 @@ import ui
 import os
 import sys
 import stat
+import time
 import chrmgr
 import chr
 import net
@@ -68,6 +69,65 @@ class Console(object):
 		self.Print("ReloadGuild")
 		reload(uiInventory)
 		self.Print("ReloadInventory")
+
+	def ReloadModule(self, name):
+		"Reload module by name (r <module_name>)"
+		if name in sys.modules:
+			try:
+				reload(sys.modules[name])
+				self.Print("Reloaded: %s" % name)
+			except Exception, e:
+				self.Print("Error: %s" % str(e))
+		else:
+			self.Print("Not loaded: %s" % name)
+
+	def ReloadRecent(self):
+		"Reload recently modified modules (ra)"
+		dev_root = os.path.join('pack', 'root')
+		if not os.path.isdir(dev_root):
+			self.Print("Dev root not found")
+			return
+
+		now = time.time()
+		reloaded = 0
+		for name, mod in sys.modules.items():
+			disk_path = os.path.join(dev_root, name + '.py')
+			if os.path.exists(disk_path):
+				if now - os.path.getmtime(disk_path) < 60:
+					try:
+						reload(mod)
+						self.Print("Reloaded: %s" % name)
+						reloaded += 1
+					except Exception, e:
+						self.Print("Error %s: %s" % (name, str(e)))
+		self.Print("Done: %d modules" % reloaded)
+
+	def ReloadUI(self):
+		"Reload UI modules and reset windows (rui)"
+		ui_modules = [
+			'uiInventory', 'uiCharacter', 'uiChat', 'uiExchange',
+			'uiShop', 'uiSafebox', 'uiMessenger', 'uiMiniMap',
+			'uiParty', 'uiQuest', 'uiTaskBar', 'uiTarget',
+			'uiToolTip', 'uiDragonSoul', 'uiWhisper', 'uiSystem',
+			'uiGuild', 'uiGameButton',
+		]
+		count = 0
+		for name in ui_modules:
+			if name in sys.modules:
+				try:
+					reload(sys.modules[name])
+					count += 1
+				except Exception, e:
+					self.Print("Error %s: %s" % (name, str(e)))
+
+		if self.game and hasattr(self.game, 'interface') and self.game.interface:
+			for attr_name in dir(self.game.interface):
+				wnd = getattr(self.game.interface, attr_name, None)
+				if wnd and hasattr(wnd, 'isLoaded'):
+					wnd.isLoaded = 0
+			self.Print("Reset isLoaded flags")
+
+		self.Print("Reloaded %d UI modules. Close/reopen windows to apply." % count)
 
 	def ShowPerformanceInfo(self):
 		"Shows Performance Info"
@@ -509,7 +569,7 @@ class Console(object):
 		chr.testSetComboType(int(type))
 
 	def SetSkillGroupFake(self, index):
-		"""Å×½ºÆ® ÄÚµå"""
+		"""ï¿½×½ï¿½Æ® ï¿½Úµï¿½"""
 		net.SetSkillGroupFake(int(index))
 		self.Print(" SetSkillGroupFake : %d" % int(index))
 
@@ -740,7 +800,7 @@ class ConsoleWindow(ui.Window):
 	def CloseWindow(self):
 		self.Hide()
 
-	## NOTE : ÀÌ°÷¿¡¼­ Command¸¦ Ã³¸®ÇÕ´Ï´Ù - [levites]
+	## NOTE : ï¿½Ì°ï¿½ï¿½ï¿½ï¿½ï¿½ Commandï¿½ï¿½ Ã³ï¿½ï¿½ï¿½Õ´Ï´ï¿½ - [levites]
 	def ProcessCommand(self, text):
 
 		if '/' == text[0]:
@@ -847,6 +907,9 @@ class ConsoleWindow(ui.Window):
 		self.AddFunction("perfinfo", Console.ShowPerformanceInfo)
 		self.AddFunction("reload_locale", Console.ReloadLocale)
 		self.AddFunction("re", Console.ReloadDevel)
+		self.AddFunction("r", Console.ReloadModule)
+		self.AddFunction("ra", Console.ReloadRecent)
+		self.AddFunction("rui", Console.ReloadUI)
 		self.AddFunction("perftime", Console.EnablePerformanceTime)
 		self.AddFunction("cooltime", Console.SetCoolTime)
 		self.AddFunction("levellimit", Console.SetLevelLimit)
