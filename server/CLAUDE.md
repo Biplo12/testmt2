@@ -25,10 +25,10 @@
 ### Dev Mode (recommended for development)
 1. Ensure `client/dev_mode` file exists (contains `pack/root`)
 2. Edit Python files in `client/pack/root/`
-3. In-game: open console (`~`), type `r moduleName` to reload
+3. In-game chat: `/r moduleName` to reload, `/ra` to reload all changed files
 - No packing needed — `system.py` reads loose .py files from disk
-- Console commands: `r <module>` (reload one), `ra` (reload recent), `rui` (reload all UI)
-- After `rui`, close/reopen windows to apply changes
+- Chat commands: `/r <module>` (reload one), `/ra` (reload all changed files)
+- Behavior changes apply immediately, creation changes (scale, position) need window close/reopen
 - `system.py` and `consolemodule.py` changes still require repacking (see below)
 
 ### Full Repack (when dev mode files change, or for release)
