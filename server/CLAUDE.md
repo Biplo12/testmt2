@@ -28,6 +28,7 @@
 3. In-game chat: `/r moduleName` to reload, `/ra` to reload all changed files
 - No packing needed — `system.py` reads loose .py files from disk
 - Chat commands: `/r <module>` (reload one), `/ra` (reload all changed files)
+- GM commands: `/notice <msg>` (server-wide notice), `/bignotice <msg>` (centered screen box)
 - Behavior changes apply immediately, creation changes (scale, position) need window close/reopen
 - `system.py` and `consolemodule.py` changes still require repacking (see below)
 
@@ -39,6 +40,6 @@
 
 ### Notes
 - `serverinfo.py` must have correct SERVER_IP/ports after repacking
-- `transparent.tga` in pack/root/ is used to hide envelope button for GM whisper
+- GM whisper now shows normal envelope button (transparent.tga override removed)
 - `client/watch-and-pack.js` — optional auto-pack watcher (`node watch-and-pack.js`)
 - To disable dev mode: delete `client/dev_mode` file

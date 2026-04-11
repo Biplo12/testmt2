@@ -50,7 +50,7 @@
 - [x] Verify TMP4 client whisper window opens correctly on receive - verified
 - [x] Verify sender name displays properly with role color codes - verified
 - [ ] Verify whisper tab/history works in client chat panel
-- [ ] GM whisper: recipient sees no blinking envelope icon - only name text shows, no visual notification (client-side `__MakeWhisperButton` in `interfacemodule.py`)
+- [x] GM whisper: envelope icon now shows normally (removed transparent.tga override in `__MakeWhisperButton`)
 
 ## Chat System
 
@@ -58,7 +58,7 @@
 - [ ] Verify chat type enum values match TMP4 client — server uses standard Metin2 values (NORMAL=0, INFO=1, NOTICE=2, GROUP=3, GUILD=4, COMMAND=5, SHOUT=6, BIG_NOTICE=8). If client differs, remap server enum.
 
 ### Normal Chat (Local)
-- [ ] Verify normal chat broadcasts correctly to nearby players (test with 2+ players)
+- [x] Verify normal chat broadcasts correctly to nearby players — verified
 - [x] Broadcast normal chat to nearby players (area/local) via `nearbyEntities`
 - [x] Include sender VID for speech bubble above character
 - [x] Server prefixes player name to message
@@ -75,12 +75,12 @@
 - [x] Client-side cooldown removed (server handles it)
 
 ### Notice (Server-Wide)
-- [ ] Verify `/notice` displays in notice color in client chat panel
+- [x] Verify `/notice` displays in notice color in client chat panel — verified
 - [x] `/notice <message>` GM command broadcasts NOTICE type to all players
 - [x] Server-only type — client-sent NOTICE packets ignored
 
 ### Big Notice (Server-Wide, Centered Screen)
-- [ ] Verify `/bignotice` displays large centered text box on client screen (like OX quiz, Image 1 in chat-system notes)
+- [x] Verify `/bignotice` displays large centered text box on client screen — verified
 - [x] `BIG_NOTICE` type added to enum (value 8, standard Metin2)
 - [x] `/bignotice <message>` GM command broadcasts BIG_NOTICE type to all players
 
