@@ -244,15 +244,8 @@ class ChatLine(ui.EditLine):
 			self.RunCloseEvent()
 			return
 
-		if app.GetTime() < self.lastShoutTime + 15:
-			chat.AppendChat(chat.CHAT_TYPE_INFO, localeInfo.CHAT_SHOUT_LIMIT)
-			self.__ResetChat()
-			return
-
 		self.__SendChatPacket(text[1:], chat.CHAT_TYPE_SHOUT)
 		self.__ResetChat()
-
-		self.lastShoutTime = app.GetTime()
 
 	def __ReLoadModule(self, name):
 		import sys, imp

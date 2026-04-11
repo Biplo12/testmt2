@@ -7,4 +7,5 @@ export enum ChatMessageTypeEnum {
     COMMAND = 5,
     SHOUT = 6,
     WHISPER = 16,
+    BIG_NOTICE = 8,
 }

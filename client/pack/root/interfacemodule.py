@@ -1548,21 +1548,7 @@ class Interface(object):
 		whisperButton.SetUpVisual("d:/ymir work/ui/game/windows/btn_mail_up.sub")
 		whisperButton.SetOverVisual("d:/ymir work/ui/game/windows/btn_mail_up.sub")
 		whisperButton.SetDownVisual("d:/ymir work/ui/game/windows/btn_mail_up.sub")
-		if self.IsGameMasterName(name):
-			whisperButton.SetUpVisual("root/transparent.tga")
-			whisperButton.SetOverVisual("root/transparent.tga")
-			whisperButton.SetDownVisual("root/transparent.tga")
-			whisperButton.SetToolTipTextWithColor(name, 0xffffa200)
-			gmMark = ui.ExpandedImageBox()
-			gmMark.SetParent(whisperButton)
-			gmMark.AddFlag("not_pick")
-			gmMark.LoadImage(app.GetLocalePath() + "/effect/ymirred.tga")
-			gmMark.SetScale(22.5, 22.5)
-			gmMark.SetPosition(-10, 0)
-			gmMark.Show()
-			whisperButton.gmMark = gmMark
-		else:
-			whisperButton.SetToolTipText(name)
+		whisperButton.SetToolTipText(name)
 		whisperButton.ToolTipText.SetHorizontalAlignCenter()
 		whisperButton.SetEvent(ui.__mem_func__(self.ShowWhisperDialog), whisperButton)
 		whisperButton.Show()
